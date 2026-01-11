@@ -40,7 +40,7 @@
 - JDK 21
 - Gradle Kotlin DSL
 - Tests: Kotest + MockK
-- Architecture rule tests: ArchUnit (패키지 의존성 규칙 및 순환 참조 검증)
+- Architecture rule tests: ArchUnit
 
 ---
 
