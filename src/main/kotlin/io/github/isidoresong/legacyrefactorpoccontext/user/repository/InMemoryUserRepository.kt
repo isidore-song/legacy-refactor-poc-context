@@ -27,4 +27,8 @@ class InMemoryUserRepository : UserRepository {
         return user
     }
 
+    override fun deleteById(id: String) {
+        userMap.remove(id)
+    }
+
 }

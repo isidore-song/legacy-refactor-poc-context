@@ -5,6 +5,7 @@ import io.github.isidoresong.legacyrefactorpoccontext.user.controller.dto.respon
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Gender
 import io.github.isidoresong.legacyrefactorpoccontext.user.service.UserService
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -29,8 +30,8 @@ class UserController(
     fun createUser(@RequestBody userCreateRequest: UserCreateRequest) : ResponseEntity<UserResponse> {
         val gender = try {
             Gender.valueOf(userCreateRequest.gender.uppercase())
-        } catch (e: IllegalArgumentException) {
-            throw IllegalArgumentException("Invalid gender value. Must be one of ${Gender.values().map { it.name }}")
+        } catch (_: IllegalArgumentException) {
+            throw IllegalArgumentException("Invalid gender value. Must be one of ${Gender.entries.map { it.name }}")
         }
 
         val createdUser = userService.createUser(
@@ -43,5 +44,11 @@ class UserController(
             .toUri()
 
         return ResponseEntity.created(location).body(UserResponse.of(createdUser))
+    }
+
+    @DeleteMapping("/{userId:[a-zA-Z0-9._-]+}")
+    fun deleteUser(@PathVariable userId: String): ResponseEntity<Void> {
+        userService.deleteUser(userId)
+        return ResponseEntity.noContent().build()
     }
 }
