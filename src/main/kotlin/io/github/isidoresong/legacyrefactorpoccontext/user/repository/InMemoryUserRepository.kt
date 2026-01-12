@@ -22,4 +22,9 @@ class InMemoryUserRepository : UserRepository {
         return userMap[id]
     }
 
+    override fun save(user: User): User {
+        userMap[user.id] = user
+        return user
+    }
+
 }
