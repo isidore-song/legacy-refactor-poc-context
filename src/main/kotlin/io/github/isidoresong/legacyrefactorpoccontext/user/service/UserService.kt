@@ -2,14 +2,18 @@ package io.github.isidoresong.legacyrefactorpoccontext.user.service
 
 import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserAlreadyExistsException
 import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserNotFoundException
+import io.github.isidoresong.legacyrefactorpoccontext.user.event.UserCreatedEvent
+import io.github.isidoresong.legacyrefactorpoccontext.user.event.UserDeletedEvent
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Gender
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.User
 import io.github.isidoresong.legacyrefactorpoccontext.user.repository.UserRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
 class UserService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val eventPublisher: ApplicationEventPublisher
 ) {
     fun getUser(userId: String) : User? = userRepository.findById(userId)
     fun createUser(userId: String, name: String, region: String, gender: Gender) : User {
@@ -17,8 +21,11 @@ class UserService(
             throw UserAlreadyExistsException("UserId '$userId' already exists")
         }
         val user = User(id = userId, name = name, region = region, gender = gender)
-        userRepository.save(user)
-        return user
+        val savedUser = userRepository.save(user)
+
+        eventPublisher.publishEvent(UserCreatedEvent(savedUser.id))
+
+        return savedUser
     }
 
     fun deleteUser(userId: String) {
@@ -26,5 +33,7 @@ class UserService(
             ?: throw UserNotFoundException("User with id '$userId' not found.")
 
         userRepository.deleteById(userId)
+
+        eventPublisher.publishEvent(UserDeletedEvent(userId))
     }
 }
