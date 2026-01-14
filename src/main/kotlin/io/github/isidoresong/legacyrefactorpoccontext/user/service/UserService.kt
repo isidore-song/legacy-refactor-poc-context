@@ -6,6 +6,7 @@ import io.github.isidoresong.legacyrefactorpoccontext.user.event.UserCreatedEven
 import io.github.isidoresong.legacyrefactorpoccontext.user.event.UserDeletedEvent
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Gender
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.User
+import io.github.isidoresong.legacyrefactorpoccontext.user.model.Status
 import io.github.isidoresong.legacyrefactorpoccontext.user.repository.UserRepository
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -13,14 +14,14 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     fun getUser(userId: String) : User? = userRepository.findById(userId)
     fun createUser(userId: String, name: String, region: String, gender: Gender) : User {
         if(userRepository.findById(userId) != null) {
             throw UserAlreadyExistsException("UserId '$userId' already exists")
         }
-        val user = User(id = userId, name = name, region = region, gender = gender)
+        val user = User(id = userId, name = name, region = region, gender = gender, status = Status.ACTIVE)
         val savedUser = userRepository.save(user)
 
         eventPublisher.publishEvent(UserCreatedEvent(savedUser.id))
@@ -29,8 +30,10 @@ class UserService(
     }
 
     fun deleteUser(userId: String) {
-        userRepository.findById(userId)
+        val user = userRepository.findById(userId)
             ?: throw UserNotFoundException("User with id '$userId' not found.")
+
+        if (user.status == Status.QUITTER) throw IllegalStateException("User with id '$userId' is already a quitter.")
 
         userRepository.deleteById(userId)
 

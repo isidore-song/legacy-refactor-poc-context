@@ -1,6 +1,7 @@
 package io.github.isidoresong.legacyrefactorpoccontext.user.repository
 
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Gender
+import io.github.isidoresong.legacyrefactorpoccontext.user.model.Status
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.User
 import org.springframework.stereotype.Repository
 import java.util.concurrent.ConcurrentHashMap
@@ -12,10 +13,11 @@ class InMemoryUserRepository : UserRepository {
 
     init {
         // 데모용 초기 데이터
-        userMap["1"] = User(id = "1", name = "John Doe", region = "Seoul", gender = Gender.MALE)
-        userMap["2"] = User(id = "2", name = "Joanne Doe", region = "Busan", gender = Gender.FEMALE)
-        userMap["3"] = User(id = "3", name = "Isidore Song", region = "Yongin", gender = Gender.MALE)
-        userMap["4"] = User(id = "4", name = "Epica Eldr", region = "Ilsan", gender = Gender.DO_NOT_DECLARE)
+        userMap["1"] = User(id = "1", name = "John Doe", region = "Seoul", gender = Gender.MALE, status = Status.ACTIVE)
+        userMap["2"] = User(id = "2", name = "Joanne Doe", region = "Busan", gender = Gender.FEMALE, status = Status.ACTIVE)
+        userMap["3"] = User(id = "3", name = "Isidore Song", region = "Yongin", gender = Gender.MALE, status = Status.QUITTER)
+        userMap["4"] = User(id = "4", name = "Epica Eldr", region = "Ilsan", gender = Gender.DO_NOT_DECLARE, status = Status.ACTIVE)
+        userMap["5"] = User(id = "5", name = "Elfin Doe", region = "Seoul", gender = Gender.FEMALE, status = Status.QUITTER)
     }
 
     override fun findById(id: String): User? {
@@ -28,7 +30,9 @@ class InMemoryUserRepository : UserRepository {
     }
 
     override fun deleteById(id: String) {
-        userMap.remove(id)
+        userMap[id]?.let { user ->
+            userMap[id] = user.copy(status = Status.QUITTER)
+        }
     }
 
 }
