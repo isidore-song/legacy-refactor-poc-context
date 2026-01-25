@@ -1,6 +1,7 @@
 package io.github.isidoresong.legacyrefactorpoccontext.user.repository
 
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Gender
+import io.github.isidoresong.legacyrefactorpoccontext.user.model.Region
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Status
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.User
 import io.github.isidoresong.legacyrefactorpoccontext.user.repository.dto.UserEntity
@@ -20,7 +21,7 @@ class InMemoryUserRepository : UserRepository {
                 User(
                     id = "1",
                     name = "John Doe",
-                    region = "Seoul",
+                    region = Region.SEOUL,
                     gender = Gender.MALE,
                     status = Status.ACTIVE
                 )
@@ -29,7 +30,7 @@ class InMemoryUserRepository : UserRepository {
             User(
                 id = "2",
                 name = "Joanne Doe",
-                region = "Busan",
+                region = Region.BUSAN,
                 gender = Gender.FEMALE,
                 status = Status.ACTIVE
             )
@@ -38,7 +39,7 @@ class InMemoryUserRepository : UserRepository {
             User(
                 id = "3",
                 name = "Isidore Song",
-                region = "Yongin",
+                region = Region.YONGIN,
                 gender = Gender.MALE,
                 status = Status.QUITTER
             )
@@ -47,7 +48,7 @@ class InMemoryUserRepository : UserRepository {
             User(
                 id = "4",
                 name = "Epica Eldr",
-                region = "Ilsan",
+                region = Region.BUSAN,
                 gender = Gender.FEMALE,
                 status = Status.ACTIVE
             )
@@ -56,7 +57,7 @@ class InMemoryUserRepository : UserRepository {
             User(
                 id = "5",
                 name = "Elfin Doe",
-                region = "Seoul",
+                region = Region.SEOUL,
                 gender = Gender.FEMALE,
                 status = Status.QUITTER
             )
@@ -65,7 +66,7 @@ class InMemoryUserRepository : UserRepository {
             User(
                 id = "6",
                 name = "Vivi Eldr",
-                region = "Seoul",
+                region = Region.SEOUL,
                 gender = Gender.FEMALE,
                 status = Status.ACTIVE
             )

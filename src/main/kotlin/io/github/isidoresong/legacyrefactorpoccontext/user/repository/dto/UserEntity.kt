@@ -1,6 +1,7 @@
 package io.github.isidoresong.legacyrefactorpoccontext.user.repository.dto
 
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Gender
+import io.github.isidoresong.legacyrefactorpoccontext.user.model.Region
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Status
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.User
 import java.time.LocalDateTime
@@ -8,7 +9,7 @@ import java.time.LocalDateTime
 data class UserEntity (
     val id: String,
     val name: String,
-    val region: String,
+    val region: Region,
     val gender: Gender,
     val status: Status,
     val createdAt: LocalDateTime,

@@ -5,6 +5,7 @@ import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserNotFo
 import io.github.isidoresong.legacyrefactorpoccontext.user.event.UserCreatedEvent
 import io.github.isidoresong.legacyrefactorpoccontext.user.event.UserDeletedEvent
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Gender
+import io.github.isidoresong.legacyrefactorpoccontext.user.model.Region
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.User
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Status
 import io.github.isidoresong.legacyrefactorpoccontext.user.repository.UserRepository
@@ -17,7 +18,7 @@ class UserService(
     private val eventPublisher: ApplicationEventPublisher,
 ) {
     fun getUser(userId: String) : User? = userRepository.findById(userId)
-    fun createUser(userId: String, name: String, region: String, gender: Gender) : User {
+    fun createUser(userId: String, name: String, region: Region, gender: Gender) : User {
         if(userRepository.findById(userId) != null) {
             throw UserAlreadyExistsException("UserId '$userId' already exists")
         }

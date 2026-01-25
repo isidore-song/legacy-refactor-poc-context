@@ -3,6 +3,7 @@ package io.github.isidoresong.legacyrefactorpoccontext.user.controller
 import io.github.isidoresong.legacyrefactorpoccontext.user.controller.dto.request.UserCreateRequest
 import io.github.isidoresong.legacyrefactorpoccontext.user.controller.dto.response.UserResponse
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Gender
+import io.github.isidoresong.legacyrefactorpoccontext.user.model.Region
 import io.github.isidoresong.legacyrefactorpoccontext.user.service.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -34,8 +35,15 @@ class UserController(
             throw IllegalArgumentException("Invalid gender value. Must be one of ${Gender.entries.map { it.name }}")
         }
 
+        val region = try {
+            Region.valueOf(userCreateRequest.region.uppercase())
+        } catch (_: IllegalArgumentException) {
+            throw IllegalArgumentException("Invalid region value. Must be one of ${Region.entries.map { it.name }}")
+        }
+
+
         val createdUser = userService.createUser(
-            userId = userCreateRequest.userId, name = userCreateRequest.name, region = userCreateRequest.region, gender = gender
+            userId = userCreateRequest.userId, name = userCreateRequest.name, region = region, gender = gender
         )
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
