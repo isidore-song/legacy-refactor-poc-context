@@ -8,6 +8,7 @@ import io.github.isidoresong.legacyrefactorpoccontext.coupon.repository.CouponRe
 import io.github.isidoresong.legacyrefactorpoccontext.point.service.PointService
 import io.github.isidoresong.legacyrefactorpoccontext.purchase.service.PurchaseService
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.ActionType
+import io.github.isidoresong.legacyrefactorpoccontext.user.repository.UserRepository
 import io.github.isidoresong.legacyrefactorpoccontext.user.service.UserService
 import io.github.isidoresong.legacyrefactorpoccontext.userAction.service.UserActionLogService
 import org.springframework.context.ApplicationEventPublisher
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class CouponService (
-    private val userService: UserService,
+    private val userRepository: UserRepository,
     private val eventPublisher: ApplicationEventPublisher,
     private val couponRepository: CouponRepository,
     private val pointService: PointService,
@@ -23,7 +24,7 @@ class CouponService (
     private val userActionLogService: UserActionLogService
 ) {
     fun grantCoupon(userId: String, couponCode: String) : CouponGrantResult {
-        val user = userService.getUser(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
+        val user = userRepository.findById(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
         val coupon = couponRepository.findByCouponCode(couponCode) ?: throw IllegalArgumentException("Coupon with code '$couponCode' not found.")
         val purchaseHistory = purchaseService.getLastPurchaseHistory(userId)
         val canApplyCoupon = coupon.check(user, purchaseHistory)

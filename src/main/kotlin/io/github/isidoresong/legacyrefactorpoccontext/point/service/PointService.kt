@@ -8,6 +8,7 @@ import io.github.isidoresong.legacyrefactorpoccontext.purchase.model.PurchaseHis
 import io.github.isidoresong.legacyrefactorpoccontext.purchase.service.PurchaseService
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.ActionType
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.User
+import io.github.isidoresong.legacyrefactorpoccontext.user.repository.UserRepository
 import io.github.isidoresong.legacyrefactorpoccontext.user.service.UserService
 import io.github.isidoresong.legacyrefactorpoccontext.userAction.service.UserActionLogService
 import org.springframework.context.ApplicationEventPublisher
@@ -15,14 +16,14 @@ import org.springframework.stereotype.Service
 
 @Service
 class PointService(
-    private val userService: UserService,
+    private val userRepository: UserRepository,
     private val eventPublisher: ApplicationEventPublisher,
     private val pointPolicyRepository: PointPolicyRepository,
     private val purchaseService: PurchaseService,
     private val userActionLogService: UserActionLogService
 ) {
     fun grantPointByPolicy(userId: String, policyCode: String): Long? {
-        val user = userService.getUser(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
+        val user = userRepository.findById(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
         val pointPolicy = pointPolicyRepository.getActivePointPolicy(policyCode) ?: throw IllegalArgumentException("Point policy with code '$policyCode' not found.")
         val purchaseHistory = purchaseService.getLastPurchaseHistory(userId)
         if(pointPolicy.check(user, purchaseHistory)) {
@@ -44,7 +45,7 @@ class PointService(
     }
 
     fun revokePoint(userId: String, policyCode: String) {
-        val user = userService.getUser(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
+        val user = userRepository.findById(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
         val pointPolicy = pointPolicyRepository.getPointPolicy(policyCode) ?: throw IllegalArgumentException("Point policy with code '$policyCode' not found.")
 
         eventPublisher.publishEvent(PointRevokeEvent(userId, policyCode, pointPolicy.pointAmount))
