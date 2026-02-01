@@ -2,6 +2,7 @@ package io.github.isidoresong.legacyrefactorpoccontext.point.service
 
 import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserNotFoundException
 import io.github.isidoresong.legacyrefactorpoccontext.point.event.PointGrantEvent
+import io.github.isidoresong.legacyrefactorpoccontext.point.event.PointRevokeEvent
 import io.github.isidoresong.legacyrefactorpoccontext.point.repository.PointPolicyRepository
 import io.github.isidoresong.legacyrefactorpoccontext.purchase.model.PurchaseHistory
 import io.github.isidoresong.legacyrefactorpoccontext.purchase.service.PurchaseService
@@ -40,5 +41,13 @@ class PointService(
             return pointPolicy.pointAmount
         }
         return null
+    }
+
+    fun revokePoint(userId: String, policyCode: String) {
+        val user = userService.getUser(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
+        val pointPolicy = pointPolicyRepository.getPointPolicy(policyCode) ?: throw IllegalArgumentException("Point policy with code '$policyCode' not found.")
+
+        eventPublisher.publishEvent(PointRevokeEvent(userId, policyCode, pointPolicy.pointAmount))
+        userActionLogService.log(ActionType.POINT_REVOKE, userId, policyCode)
     }
 }

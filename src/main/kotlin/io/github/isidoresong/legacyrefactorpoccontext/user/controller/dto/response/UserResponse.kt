@@ -13,7 +13,7 @@ data class UserResponse(
             return UserResponse(
                 userId = user.id,
                 name = user.name,
-                region = user.region,
+                region = user.region.name,
                 gender = user.gender.name
             )
         }

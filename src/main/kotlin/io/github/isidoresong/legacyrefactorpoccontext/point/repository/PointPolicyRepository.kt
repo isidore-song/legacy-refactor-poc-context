@@ -4,4 +4,5 @@ import io.github.isidoresong.legacyrefactorpoccontext.point.model.PointPolicy
 
 interface PointPolicyRepository {
     fun getActivePointPolicy(policyCode: String) : PointPolicy?
+    fun getPointPolicy(policyCode: String) : PointPolicy?
 }

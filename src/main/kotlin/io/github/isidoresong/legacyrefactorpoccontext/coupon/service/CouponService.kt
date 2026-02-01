@@ -2,6 +2,7 @@ package io.github.isidoresong.legacyrefactorpoccontext.coupon.service
 
 import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserNotFoundException
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.event.CouponGrantEvent
+import io.github.isidoresong.legacyrefactorpoccontext.coupon.event.CouponRevokeEvent
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.model.CouponGrantResult
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.repository.CouponRepository
 import io.github.isidoresong.legacyrefactorpoccontext.point.service.PointService
@@ -54,5 +55,10 @@ class CouponService (
             success = false,
             user = user
         )
+    }
+
+    fun revokeCoupon(userId: String, couponCode: String) {
+        eventPublisher.publishEvent(CouponRevokeEvent(userId, couponCode))
+        userActionLogService.log(ActionType.COUPON_REVOKE, userId, couponCode)
     }
 }
