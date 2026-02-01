@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -58,5 +59,11 @@ class UserController(
     fun deleteUser(@PathVariable userId: String): ResponseEntity<Void> {
         userService.deleteUser(userId)
         return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/{userId:[a-zA-Z0-9._-]+}/suspension")
+    fun suspendUser(@PathVariable userId: String): ResponseEntity<UserResponse> {
+        val user = userService.suspendUser(userId)
+        return ResponseEntity.ok(UserResponse.of(user))
     }
 }

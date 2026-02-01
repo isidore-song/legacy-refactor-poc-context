@@ -15,4 +15,9 @@ class UserEventListener {
     fun handleUserDeletedEvent(event: UserDeletedEvent) {
         println("Consumed Internal Event & Publishing to external system: User deleted with ID - ${event.userId}")
     }
+
+    @EventListener
+    fun handleUserSuspendedEvent(event: UserSuspendedEvent) {
+        println("Consumed Internal Event & Publishing to external system: User suspended with ID - ${event.userId}")
+    }
 }

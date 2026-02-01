@@ -11,4 +11,6 @@ class InMemoryPointPolicyRepository : PointPolicyRepository {
 
     override fun getActivePointPolicy(policyCode: String): PointPolicy? =
         pointPolicyMap[policyCode]?.takeIf { it.active }?.to()
+
+    override fun getPointPolicy(policyCode: String): PointPolicy? = pointPolicyMap[policyCode]?.to()
 }
