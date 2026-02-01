@@ -3,8 +3,10 @@ package io.github.isidoresong.legacyrefactorpoccontext.point.service
 import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserNotFoundException
 import io.github.isidoresong.legacyrefactorpoccontext.point.event.PointGrantEvent
 import io.github.isidoresong.legacyrefactorpoccontext.point.repository.PointPolicyRepository
+import io.github.isidoresong.legacyrefactorpoccontext.purchase.model.PurchaseHistory
 import io.github.isidoresong.legacyrefactorpoccontext.purchase.service.PurchaseService
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.ActionType
+import io.github.isidoresong.legacyrefactorpoccontext.user.model.User
 import io.github.isidoresong.legacyrefactorpoccontext.user.service.UserService
 import io.github.isidoresong.legacyrefactorpoccontext.userAction.service.UserActionLogService
 import org.springframework.context.ApplicationEventPublisher
@@ -25,6 +27,16 @@ class PointService(
         if(pointPolicy.check(user, purchaseHistory)) {
             eventPublisher.publishEvent(PointGrantEvent(userId, policyCode, pointPolicy.pointAmount))
             userActionLogService.log(ActionType.POINT_GRANT, userId, policyCode)
+            return pointPolicy.pointAmount
+        }
+        return null
+    }
+
+    fun grantPointByPolicy(user: User, purchaseHistory: PurchaseHistory?, policyCode: String): Long? {
+        val pointPolicy = pointPolicyRepository.getActivePointPolicy(policyCode) ?: throw IllegalArgumentException("Point policy with code '$policyCode' not found.")
+        if(pointPolicy.check(user, purchaseHistory)) {
+            eventPublisher.publishEvent(PointGrantEvent(user.id, pointPolicy.policyCode, pointPolicy.pointAmount))
+            userActionLogService.log(ActionType.POINT_GRANT, user.id, pointPolicy.policyCode)
             return pointPolicy.pointAmount
         }
         return null
