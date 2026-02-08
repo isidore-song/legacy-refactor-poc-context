@@ -5,6 +5,7 @@ import io.github.isidoresong.legacyrefactorpoccontext.coupon.event.CouponGrantEv
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.event.CouponRevokeEvent
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.model.CouponGrantResult
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.repository.CouponRepository
+import io.github.isidoresong.legacyrefactorpoccontext.point.port.PointPort
 import io.github.isidoresong.legacyrefactorpoccontext.point.service.PointService
 import io.github.isidoresong.legacyrefactorpoccontext.purchase.service.PurchaseService
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.ActionType
@@ -19,7 +20,7 @@ class CouponService (
     private val userRepository: UserRepository,
     private val eventPublisher: ApplicationEventPublisher,
     private val couponRepository: CouponRepository,
-    private val pointService: PointService,
+    private val pointPort: PointPort,
     private val purchaseService: PurchaseService,
     private val userActionLogService: UserActionLogService
 ) {
@@ -38,13 +39,9 @@ class CouponService (
             )
         }
         if(coupon.compensationPointPolicyCode != null){
-            // 이슈 1. 사용자, 지급 이력 조회가 중복 호출됨
-            val pointResult = pointService.grantPointByPolicy(userId, coupon.compensationPointPolicyCode)
-            // 이슈 2. 사용자, 지급 이력이 인자로 받는 메서드가 추가됨
-            pointService.grantPointByPolicy(user, purchaseHistory, coupon.compensationPointPolicyCode)
-            // 이슈 3. 간단한 로직이라고 여기서 포인트 지급을 구현하면 단일책임원칙 위반
+            val pointAmount = pointPort.grantByPolicy(userId, coupon.compensationPointPolicyCode)
 
-            if(pointResult != null) {
+            if(pointAmount != null) {
                 return CouponGrantResult(
                     success = true,
                     user = user,

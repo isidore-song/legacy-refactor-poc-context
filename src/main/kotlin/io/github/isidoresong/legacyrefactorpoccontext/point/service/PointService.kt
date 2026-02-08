@@ -34,16 +34,6 @@ class PointService(
         return null
     }
 
-    fun grantPointByPolicy(user: User, purchaseHistory: PurchaseHistory?, policyCode: String): Long? {
-        val pointPolicy = pointPolicyRepository.getActivePointPolicy(policyCode) ?: throw IllegalArgumentException("Point policy with code '$policyCode' not found.")
-        if(pointPolicy.check(user, purchaseHistory)) {
-            eventPublisher.publishEvent(PointGrantEvent(user.id, pointPolicy.policyCode, pointPolicy.pointAmount))
-            userActionLogService.log(ActionType.POINT_GRANT, user.id, pointPolicy.policyCode)
-            return pointPolicy.pointAmount
-        }
-        return null
-    }
-
     fun revokePoint(userId: String, policyCode: String) {
         val user = userRepository.findById(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
         val pointPolicy = pointPolicyRepository.getPointPolicy(policyCode) ?: throw IllegalArgumentException("Point policy with code '$policyCode' not found.")
