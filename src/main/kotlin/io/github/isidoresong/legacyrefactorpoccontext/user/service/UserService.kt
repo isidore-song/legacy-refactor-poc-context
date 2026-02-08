@@ -2,6 +2,7 @@ package io.github.isidoresong.legacyrefactorpoccontext.user.service
 
 import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserAlreadyExistsException
 import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserNotFoundException
+import io.github.isidoresong.legacyrefactorpoccontext.coupon.port.CouponPort
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.service.CouponService
 import io.github.isidoresong.legacyrefactorpoccontext.point.port.PointPort
 import io.github.isidoresong.legacyrefactorpoccontext.point.service.PointService
@@ -24,7 +25,7 @@ class UserService(
     private val eventPublisher: ApplicationEventPublisher,
     private val userActionLogService: UserActionLogService,
     private val pointPort: PointPort,
-    private val couponService: CouponService,
+    private val couponPort: CouponPort
 ) {
     fun getUser(userId: String) : User? = userRepository.findById(userId)
     fun createUser(userId: String, name: String, region: Region, gender: Gender) : User {
@@ -63,7 +64,7 @@ class UserService(
         val lastPointLogs = userActionLogService.getLastActionLogs(ActionType.POINT_GRANT, userId, 7)
 
         lastCouponLogs.asSequence().forEach {
-            couponService.revokeCoupon(it.userId, it.detail)
+            couponPort.revokeByCode(it.userId, it.detail)
         }
         lastPointLogs.asSequence().forEach {
             pointPort.revokeByPolicy(it.userId, it.detail)
