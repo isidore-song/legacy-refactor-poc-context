@@ -3,9 +3,7 @@ package io.github.isidoresong.legacyrefactorpoccontext.user.service
 import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserAlreadyExistsException
 import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserNotFoundException
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.port.CouponPort
-import io.github.isidoresong.legacyrefactorpoccontext.coupon.service.CouponService
 import io.github.isidoresong.legacyrefactorpoccontext.point.port.PointPort
-import io.github.isidoresong.legacyrefactorpoccontext.point.service.PointService
 import io.github.isidoresong.legacyrefactorpoccontext.user.event.UserCreatedEvent
 import io.github.isidoresong.legacyrefactorpoccontext.user.event.UserDeletedEvent
 import io.github.isidoresong.legacyrefactorpoccontext.user.event.UserSuspendedEvent

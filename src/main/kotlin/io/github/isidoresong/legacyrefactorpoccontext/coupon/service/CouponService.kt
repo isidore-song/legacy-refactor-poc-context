@@ -6,11 +6,9 @@ import io.github.isidoresong.legacyrefactorpoccontext.coupon.event.CouponRevokeE
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.model.CouponGrantResult
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.repository.CouponRepository
 import io.github.isidoresong.legacyrefactorpoccontext.point.port.PointPort
-import io.github.isidoresong.legacyrefactorpoccontext.point.service.PointService
 import io.github.isidoresong.legacyrefactorpoccontext.purchase.service.PurchaseService
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.ActionType
 import io.github.isidoresong.legacyrefactorpoccontext.user.repository.UserRepository
-import io.github.isidoresong.legacyrefactorpoccontext.user.service.UserService
 import io.github.isidoresong.legacyrefactorpoccontext.userAction.service.UserActionLogService
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
