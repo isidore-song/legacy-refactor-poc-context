@@ -1,9 +1,9 @@
 package io.github.isidoresong.legacyrefactorpoccontext.coupon.usecase
 
-import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserNotFoundException
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.event.CouponGrantEvent
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.model.CouponGrantResult
 import io.github.isidoresong.legacyrefactorpoccontext.coupon.repository.CouponRepository
+import io.github.isidoresong.legacyrefactorpoccontext.coupon.usecase.context.GrantCouponContext
 import io.github.isidoresong.legacyrefactorpoccontext.point.port.PointPort
 import io.github.isidoresong.legacyrefactorpoccontext.purchase.service.PurchaseService
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.ActionType
@@ -23,23 +23,27 @@ class GrantCouponUseCase(
 ) {
 
     fun execute(userId: String, couponCode: String): CouponGrantResult {
-        val user = userRepository.findById(userId)
-            ?: throw UserNotFoundException("User with id '$userId' not found.")
-        val coupon = couponRepository.findByCouponCode(couponCode)
-            ?: throw IllegalArgumentException("Coupon with code '$couponCode' not found.")
+        val ctx = GrantCouponContext(
+            userId = userId,
+            userRepository = userRepository,
+            couponRepository = couponRepository,
+            purchaseService = purchaseService
+        )
 
-        val purchaseHistory = purchaseService.getLastPurchaseHistory(userId)
+        val user = ctx.user
+        val coupon = ctx.loadCoupon(couponCode)
+
+        val purchaseHistory = ctx.loadPurchaseHistory()
 
         if (coupon.check(user, purchaseHistory)) {
             eventPublisher.publishEvent(CouponGrantEvent(userId, couponCode))
             userActionLogService.log(ActionType.COUPON_GRANT, userId, couponCode)
-
             return CouponGrantResult(success = true, user = user, coupon = coupon)
         }
 
         val policyCode = coupon.compensationPointPolicyCode
         if (policyCode != null) {
-            val pointAmount = pointPort.grantByPolicy(userId, policyCode)
+            val pointAmount = pointPort.grantByPolicy(user, purchaseHistory, policyCode)
             if (pointAmount != null) {
                 return CouponGrantResult(success = true, user = user, pointPolicyCode = policyCode)
             }
