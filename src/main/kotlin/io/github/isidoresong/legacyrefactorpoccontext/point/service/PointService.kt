@@ -4,12 +4,9 @@ import io.github.isidoresong.legacyrefactorpoccontext.common.exception.UserNotFo
 import io.github.isidoresong.legacyrefactorpoccontext.point.event.PointGrantEvent
 import io.github.isidoresong.legacyrefactorpoccontext.point.event.PointRevokeEvent
 import io.github.isidoresong.legacyrefactorpoccontext.point.repository.PointPolicyRepository
-import io.github.isidoresong.legacyrefactorpoccontext.purchase.model.PurchaseHistory
 import io.github.isidoresong.legacyrefactorpoccontext.purchase.service.PurchaseService
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.ActionType
-import io.github.isidoresong.legacyrefactorpoccontext.user.model.User
 import io.github.isidoresong.legacyrefactorpoccontext.user.repository.UserRepository
-import io.github.isidoresong.legacyrefactorpoccontext.user.service.UserService
 import io.github.isidoresong.legacyrefactorpoccontext.userAction.service.UserActionLogService
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -35,7 +32,7 @@ class PointService(
     }
 
     fun revokePoint(userId: String, policyCode: String) {
-        val user = userRepository.findById(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
+        userRepository.findById(userId) ?: throw UserNotFoundException("User with id '$userId' not found.")
         val pointPolicy = pointPolicyRepository.getPointPolicy(policyCode) ?: throw IllegalArgumentException("Point policy with code '$policyCode' not found.")
 
         eventPublisher.publishEvent(PointRevokeEvent(userId, policyCode, pointPolicy.pointAmount))

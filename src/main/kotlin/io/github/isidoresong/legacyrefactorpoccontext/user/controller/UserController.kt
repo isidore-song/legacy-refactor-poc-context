@@ -5,6 +5,7 @@ import io.github.isidoresong.legacyrefactorpoccontext.user.controller.dto.respon
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Gender
 import io.github.isidoresong.legacyrefactorpoccontext.user.model.Region
 import io.github.isidoresong.legacyrefactorpoccontext.user.service.UserService
+import io.github.isidoresong.legacyrefactorpoccontext.user.usecase.SuspendUserUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,7 +20,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RestController
 @RequestMapping("/v1/users")
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
+    private val suspendUserUseCase: SuspendUserUseCase,
 ) {
     @GetMapping("/{userId:[a-zA-Z0-9._-]+}")
     fun getUser(@PathVariable userId: String) : ResponseEntity<UserResponse> {
@@ -63,7 +65,7 @@ class UserController(
 
     @PutMapping("/{userId:[a-zA-Z0-9._-]+}/suspension")
     fun suspendUser(@PathVariable userId: String): ResponseEntity<UserResponse> {
-        val user = userService.suspendUser(userId)
+        val user = suspendUserUseCase.execute(userId)
         return ResponseEntity.ok(UserResponse.of(user))
     }
 }
